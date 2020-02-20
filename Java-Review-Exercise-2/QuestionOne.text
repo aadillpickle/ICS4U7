@@ -1,0 +1,9 @@
+Right now the program does not take into account ages that are exactly 18 or 65 and does not take into account negative numbers as input.
+Ages cannot be negative but right now, if a user enters a negative number, they will be told that they are a child when, in real life, we don't have negative ages. 
+(At most, you can say someone is -0.75 years old when they're in the womb.)
+To fix this, the first line should be changed to the following:
+if (age >= 0 && age < 18) {//code here}
+
+And if I were to input those ages (18 and 65), the program would output nothing. 
+To fix this, the first else if statement should be changed to have inclusive less than and greater than operators.
+Ex: else if (age =< 18 && age =< 65) {//code here}. 

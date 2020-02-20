@@ -1,0 +1,4 @@
+*.zip
+.project
+.classpath
+.DS_Store

@@ -1,0 +1,11 @@
+a. long to double -> no
+b. byte to char -> yes
+c. float to double -> no
+d. byte to long -> no
+e. short to char -> yes
+f. double to long -> yes
+
+Essentially, numeric types are automatically casted to one another as 
+long as the type they're casted to holds more decimal places than the original type.
+Strings and chars have to be explicitly converted, even to each other, as well as any numeric types.
+
