@@ -20,21 +20,15 @@ import java.util.Scanner;
 public class GraphicalEditor
 {
     private static ArrayList<ArrayList> graphicsOutput = new ArrayList<ArrayList>();
-    private static final String WORKSPACE_PATH = "/Users/aadilali/repos/ICS4U1/Assignment - 1/";
     private static int M = 0;
     private static int N = 0;
     private static String originalColor = "";
     private static boolean colorFlag = false;
 
 /**
-   Convert calendar date into Julian day.
-   Note: This algorithm is from Press et al., Numerical Recipes
-   in C, 2nd ed., Cambridge University Press, 1992
-   @param day day of the date to be converted
-   @param month month of the date to be converted
-   @param year year of the date to be converted
-   @return the Julian day number that begins at noon of the
-   given calendar date.
+   Initializes an N x M grid of zeros
+   @param M The number of columns in the graphic output grid
+   @param N The number of rows in the graphic output grid
 */
     public static void I(int M, int N)
     {
@@ -48,7 +42,9 @@ public class GraphicalEditor
             }
         }
     }
-
+/**
+   Sets all values in the graphic output grid to zero
+*/
     public static void C()
     {
         for (int i = 0; i < graphicsOutput.size(); i++)
@@ -59,12 +55,24 @@ public class GraphicalEditor
             }
         }
     }
-
+/**
+   Sets a point in the graphics output grid to a certain color 
+   @param X The x coordinate (column) of the point
+   @param Y The y coordinate (row) of the point
+   @param C The color of the point, represented as a single letter
+*/
     public static void L(int X, int Y, String C)
     {
         graphicsOutput.get(Y - 1).set(X - 1, C);
     }
-
+/**
+   Sets a vertical line in the graphics output grid to a certain color.
+   The length is the delta between Y2 and Y1.
+   @param X The x coordinate (column) at which the line is drawn
+   @param Y1 The starting y coordinate (row) of the line
+   @param Y2 The ending y coordinate (row) of the line
+   @param C The color of the points, represented as a single letter
+*/
     public static void V(int X, int Y1, int Y2, String C)
     {
         int columnToColor = X - 1;
@@ -77,7 +85,14 @@ public class GraphicalEditor
         }
         
     }
-
+/**
+   Sets a horizontal line in the graphics output grid to a certain color.
+   The length is the delta between X2 and X1.
+   @param X1 The starting x coordinate (column) of the line
+   @param X2 The ending x coordinate (column) of the line
+   @param Y The y coordinate (row) at which the line is drawn
+   @param C The color of the points, represented as a single letter
+*/
     public static void H(int X1, int X2, int Y, String C)
     {
         ArrayList rowToColor = graphicsOutput.get(Y - 1);
@@ -89,7 +104,16 @@ public class GraphicalEditor
             rowToColor.set(i, C);
         }
     }
-
+/**
+   Sets a rectangle in the graphics output grid to a certain color.
+   The length is the delta between X2 and X1.
+   The width is the delta between Y2 and Y1.
+   @param X1 The starting x coordinate (column) of the rectangle
+   @param Y1 The starting y coordinate (row) of the rectangle
+   @param X2 The ending x coordinate (column) of the rectangle 
+   @param Y2 The ending y coordinate (row) of the rectangle
+   @param C The color of the points, represented as a single letter
+*/
     public static void K(int X1, int Y1, int X2, int Y2, String C)
     {
         int startingRow = Y1 - 1;
@@ -106,18 +130,30 @@ public class GraphicalEditor
         }
 
     }
-
+/**
+   Fills the region R with the color C, where R is defined as
+   follows. Pixel (X, Y) belongs to R. Any other pixel
+   which is the same color as pixel (X, Y) and shares a
+   common side with any pixel in R also belongs to this region.
+   @param X The x coordinate (column) of the starting point
+   @param Y The y coordinate (row) of the starting point
+   @param C The color of the points, represented as a single letter
+*/
     public static void F(int X, int Y, String C)
     {
         int row = Y;
         int column = X;
 
+        /*
+        check if this is the first time the function is run to determine
+        the original color that needs to be changed to the new color 
+        */
         if (!colorFlag)
         {
             originalColor = String.valueOf(graphicsOutput.get(row).get(column));
             colorFlag = true;
         }
-
+        //set point to new color
         try
         {   
             graphicsOutput.get(row).set(column, C);
@@ -127,7 +163,10 @@ public class GraphicalEditor
         {  
 
         }
-
+        /*
+        check if any corners around the point are the original color 
+        and call fill on them recursively if they are
+        */
         try
         {
             if (originalColor.equals(String.valueOf(graphicsOutput.get(row + 1).get(column))))
@@ -223,23 +262,32 @@ public class GraphicalEditor
         }
     }
 
+/**
+   Creates and writes the contents of the graphics output grid to a file
+   @param Name The name of the file that is created and written to
+*/
     public static void S(String Name) throws IOException
     {
-        String out = "";
+        /*
+        append all rows to output and delimit 
+        with \n to print rows on new lines
+        */
+        String output = "";
         for (int i = 0; i < graphicsOutput.size(); i++)
         {
             for (int j = 0; j < graphicsOutput.get(i).size(); j++)
             {
-                out+= String.valueOf(graphicsOutput.get(i).get(j));
+                output += String.valueOf(graphicsOutput.get(i).get(j));
             }
-            out += "\n";
+            output += "\n";
         }
-        File outputFile = new File(WORKSPACE_PATH + Name);
+        //create output file and write out output String to it
+        File outputFile = new File(Name);
         try
         {
-            BufferedWriter writeOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
-            writeOutput.write(out);
-            //writeOutput.flush();
+            BufferedWriter writeOutput = new BufferedWriter
+            (new OutputStreamWriter(new FileOutputStream(outputFile)));
+            writeOutput.write(output);
             writeOutput.close();
         }
         catch (IOException IOError)
@@ -261,11 +309,14 @@ public class GraphicalEditor
         numParams.put("F", 4);
         numParams.put("S", 2);
         numParams.put("X", 1);
+        //prompt for and get input text file
         Scanner getFile = new Scanner(System.in);
-        System.out.println("Enter the name of your input file (typically input.txt):");
+        System.out.println("Enter the name of your input file" 
+        + "(ex. /Users/aadilali/repos/ICS4U1/Assignment-1/input.txt):");
         String filename = getFile.nextLine();
         getFile.close();
-        File inputFile = new File(WORKSPACE_PATH + filename);
+        File inputFile = new File(filename);
+        //split text file into commands and split commands into parameters
         String lines = "";
         try
         {
@@ -286,31 +337,38 @@ public class GraphicalEditor
         {
             commands.add(inputArr[i].split(" "));
         }
-
+        //preprocess and validate commands then call them with given params
         for (int i = 0; i < commands.size(); i++)
         {
             String commandLetter = commands.get(i)[0];
             String[] commandParameters = commands.get(i);
             if (VALID_COMMANDS.contains(commandLetter))
             {
-                if (commandLetter.equals("I") && numParams.get("I") == commandParameters.length)//runs
+                if (commandLetter.equals("I") 
+                && numParams.get("I") == commandParameters.length)//runs
                 {
                     M = Integer.parseInt(commandParameters[1]);
                     N = Integer.parseInt(commandParameters[2]);
                     I(M, N);
                 }
-                else if (commandLetter.equals("C") && numParams.get("C") == commandParameters.length)//runs
+
+                else if (commandLetter.equals("C") 
+                && numParams.get("C") == commandParameters.length)//runs
                 {
                     C();
                 }
-                else if (commandLetter.equals("L") && numParams.get("L") == commandParameters.length)//runs
+
+                else if (commandLetter.equals("L") 
+                && numParams.get("L") == commandParameters.length)//runs
                 {
                     int X = Integer.parseInt(commandParameters[1]);
                     int Y = Integer.parseInt(commandParameters[2]);
                     String C = commandParameters[3];
                     L(X, Y, C);
                 }
-                else if (commandLetter.equals("V") && numParams.get("V") == commandParameters.length)//runs
+
+                else if (commandLetter.equals("V") 
+                && numParams.get("V") == commandParameters.length)//runs
                 {
                     int X = Integer.parseInt(commandParameters[1]);
                     int Y1 = Integer.parseInt(commandParameters[2]);
@@ -318,7 +376,9 @@ public class GraphicalEditor
                     String C = commandParameters[4];
                     V(X, Y1, Y2, C);
                 }
-                else if (commandLetter.equals("H") && numParams.get("H") == commandParameters.length)
+
+                else if (commandLetter.equals("H") 
+                && numParams.get("H") == commandParameters.length)
                 {
                     int X1 = Integer.parseInt(commandParameters[1]);
                     int X2 = Integer.parseInt(commandParameters[2]);
@@ -326,7 +386,9 @@ public class GraphicalEditor
                     String C = commandParameters[4];
                     H(X1, X2, Y, C);
                 }
-                else if (commandLetter.equals("K") && numParams.get("K") == commandParameters.length)
+
+                else if (commandLetter.equals("K") 
+                && numParams.get("K") == commandParameters.length)
                 {
                     int X1 = Integer.parseInt(commandParameters[1]);
                     int Y1 = Integer.parseInt(commandParameters[2]);
@@ -335,32 +397,36 @@ public class GraphicalEditor
                     String C = commandParameters[5];
                     K(X1, Y1, X2, Y2, C);
                 }
-                else if (commandLetter.equals("F") && numParams.get("F") == commandParameters.length)
+
+                else if (commandLetter.equals("F") 
+                && numParams.get("F") == commandParameters.length)
                 {
                     int X = Integer.parseInt(commandParameters[1]) - 1;
                     int Y = Integer.parseInt(commandParameters[2]) - 1;
                     String C = commandParameters[3];
                     F(X, Y, C);
                 }
-                else if (commandLetter.equals("S") && numParams.get("S") == commandParameters.length)
+                else if (commandLetter.equals("S") 
+                && numParams.get("S") == commandParameters.length)
                 {
                     String Name = commandParameters[1];
                     S(Name);
                 }
-                else if (commandLetter.equals("X") && numParams.get("X") == commandParameters.length) //runs
+                else if (commandLetter.equals("X") 
+                && numParams.get("X") == commandParameters.length) 
                 {
                     System.exit(0);
                 }
+
                 else
                 {
                     continue;
                 }
-            }
+        }
             else
             {
                 continue;
             }
         }
-    }
-    
+    } 
 }

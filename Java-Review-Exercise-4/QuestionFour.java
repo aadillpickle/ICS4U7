@@ -25,22 +25,44 @@ class QuestionFour
                     try
                     {
                         counts[i-1][j+1]++;
-                   
-                        counts[i-1][j-1]++; 
-                   
-                        counts[i+1][j]++;
-                   
-                        counts[i][j-1]++;
-                   
-                            counts[i][j+1]++;
-                   
-                            counts[i-1][j]++;
-                   
-                            counts[i+1][j-1]++;
-                   
-                            counts[i+1][j+1]++;
                     } 
                     catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i-1][j-1]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i+1][j]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i][j-1]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i][j+1]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i-1][j]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i+1][j-1]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    try
+                    {
+                        counts[i+1][j+1]++;
+                    } 
+                    catch (ArrayIndexOutOfBoundsException e) {}
+                    
                 }
             }
         }
