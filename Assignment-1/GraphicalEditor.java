@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -11,24 +10,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+   COPYRIGHT (C) 2020 Aadil Ali. All Rights Reserved.
+   Class to create a graphic based on given commands 
+   Solves ICS4U1 assignment #1
+   @author Aadil Ali
+   @version 1.01 2020-02-28
+*/
 public class GraphicalEditor
 {
-    public static ArrayList<ArrayList> graphicsOutput = new ArrayList<ArrayList>();
-    public static final String WORKSPACE_PATH = "/Users/aadilali/repos/ICS4U1/Assignment-1/";
-    public static int M = 0;
-    public static int N = 0;
+    private static ArrayList<ArrayList> graphicsOutput = new ArrayList<ArrayList>();
+    private static final String WORKSPACE_PATH = "/Users/aadilali/repos/ICS4U1/Assignment - 1/";
+    private static int M = 0;
+    private static int N = 0;
+    private static String originalColor = "";
+    private static boolean colorFlag = false;
+
+/**
+   Convert calendar date into Julian day.
+   Note: This algorithm is from Press et al., Numerical Recipes
+   in C, 2nd ed., Cambridge University Press, 1992
+   @param day day of the date to be converted
+   @param month month of the date to be converted
+   @param year year of the date to be converted
+   @return the Julian day number that begins at noon of the
+   given calendar date.
+*/
     public static void I(int M, int N)
     {
-        for (int i = 0; i < M; i++)
+        for (int i = 0; i < N; i++)
         {
             ArrayList<Integer> rowToAdd = new ArrayList<Integer>();
             graphicsOutput.add(rowToAdd);
-            for (int j = 0; j < N; j++)
+            for (int j = 0; j < M; j++)
             {
                 graphicsOutput.get(i).add(0);
             }
         }
     }
+
     public static void C()
     {
         for (int i = 0; i < graphicsOutput.size(); i++)
@@ -39,14 +59,16 @@ public class GraphicalEditor
             }
         }
     }
+
     public static void L(int X, int Y, String C)
     {
-        graphicsOutput.get(X-1).set(Y-1, C);
+        graphicsOutput.get(Y - 1).set(X - 1, C);
     }
+
     public static void V(int X, int Y1, int Y2, String C)
     {
-        int columnToColor = X-1;
-        int startingRow = Y1-1;
+        int columnToColor = X - 1;
+        int startingRow = Y1 - 1;
         int endingRow = Y2;
 
         for (int i = startingRow; i < endingRow; i++)
@@ -55,10 +77,11 @@ public class GraphicalEditor
         }
         
     }
+
     public static void H(int X1, int X2, int Y, String C)
     {
-        ArrayList rowToColor = graphicsOutput.get(Y-1);
-        int startingColumn = X1-1;
+        ArrayList rowToColor = graphicsOutput.get(Y - 1);
+        int startingColumn = X1 - 1;
         int endingColumn = X2;
 
         for (int i = startingColumn; i < endingColumn; i++)
@@ -66,11 +89,12 @@ public class GraphicalEditor
             rowToColor.set(i, C);
         }
     }
+
     public static void K(int X1, int Y1, int X2, int Y2, String C)
     {
-        int startingRow = Y1-1;
+        int startingRow = Y1 - 1;
         int endingRow = Y2;
-        int startingColumn = X1-1;
+        int startingColumn = X1 - 1;
         int endingColumn = X2;
 
         for (int i = startingColumn; i < endingColumn; i++)
@@ -82,83 +106,125 @@ public class GraphicalEditor
         }
 
     }
+
     public static void F(int X, int Y, String C)
     {
-        int row = X-1;
-        int column = Y-1;
-        String originalColor = String.valueOf(graphicsOutput.get(row).get(column));
-        String color = C;
-        L(row, column, color);
-                    
-        if (row-1 >= 0 && column+1 < N)
+        int row = Y;
+        int column = X;
+
+        if (!colorFlag)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row-1).get(column+1))))
+            originalColor = String.valueOf(graphicsOutput.get(row).get(column));
+            colorFlag = true;
+        }
+
+        try
+        {   
+            graphicsOutput.get(row).set(column, C);
+            
+        }
+        catch (IndexOutOfBoundsException e)
+        {  
+
+        }
+
+        try
+        {
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row + 1).get(column))))
             {
-                graphicsOutput.get(row-1).set(column+1, color);
-                F(row, column+2, color);
+                F(column, row + 1, C);
             }
         }
-        else if (row-1 >= 0 && column-1 >= 0)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row-1).get(column-1))))
-            {
-                graphicsOutput.get(row-1).set(column-1, color);
-                F(row, column, color);
+
+        }
+
+        try
+        {                
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row + 1).get(column - 1))))
+            {                    
+                F(column - 1, row + 1, C);
             }
         }
-        else if (row+1 < M)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row+1).get(column))))
-            {
-                graphicsOutput.get(row+1).set(column, color);
-                F(row+2, column+1, color);
+            
+        }
+
+        try
+        {                
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row).get(column - 1))))
+            {                    
+                F(column - 1, row, C);
             }
         }
-        else if (column-1 >= 0)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row).get(column-1))))
-            {
-                graphicsOutput.get(row).set(column-1, color);
-                F(row+1, column, color);
+
+        }
+
+        try
+        {                
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row - 1).get(column - 1))))
+            {                    
+                F(column - 1, row - 1, C);
             }
         }
-        else if (column+1 < N)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row).get(column+1))))
+            
+        }
+        try
+        {
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row - 1).get(column))))
             {
-                graphicsOutput.get(row).set(column+1, color);
-                F(row+1, column+2, color);
+                F(column, row - 1, C);
             }
         }
-        else if (row-1 >= 0)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row-1).get(column))))
-            {
-                graphicsOutput.get(row-1).set(column, color);
-                F(row, column+1, color);
+            
+        }
+
+        try
+        {                
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row - 1).get(column + 1))))
+            {                    
+                F(column + 1, row - 1, C);
             }
         }
-        else if (row+1 < M && column-1 >=0)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row+1).get(column-1))))
+            
+        }
+
+        try
+        {
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row).get(column + 1))))
             {
-                graphicsOutput.get(row+1).set(column-1, color);
-                F(row+2, column, color);
+                F(column + 1, row, C);
             }
         }
-        else if (row+1 < M && column+1 < N)
+        catch (IndexOutOfBoundsException e)
         {
-            if (originalColor.equals(String.valueOf(graphicsOutput.get(row+1).get(column+1))))
-            {
-                graphicsOutput.get(row+1).set(column+1, color);
-                F(row+2, column+2, color);
+
+        }
+        try
+        {                
+            if (originalColor.equals(String.valueOf(graphicsOutput.get(row + 1).get(column + 1))))
+            {                    
+                F(column + 1, row + 1, C);
             }
         }
-  
+        catch (IndexOutOfBoundsException e)
+        {
+            
+        }
     }
+
     public static void S(String Name) throws IOException
     {
-        System.out.println(Name);
         String out = "";
         for (int i = 0; i < graphicsOutput.size(); i++)
         {
@@ -168,7 +234,6 @@ public class GraphicalEditor
             }
             out += "\n";
         }
-        System.out.println("boop");
         File outputFile = new File(WORKSPACE_PATH + Name);
         try
         {
@@ -185,8 +250,7 @@ public class GraphicalEditor
     }
     public static void main(String[] args) throws FileNotFoundException, IOException
     {
-         //"/Users/aadilali/repos/ICS4U1/Assignment-1/input.txt";
-        List<String> validCommands = Arrays.asList("I", "C", "L", "V", "H", "K", "F", "S", "X");
+        final List<String> VALID_COMMANDS = Arrays.asList("I", "C", "L", "V", "H", "K", "F", "S", "X");
         HashMap<String, Integer> numParams = new HashMap<String, Integer>();
         numParams.put("I", 3);
         numParams.put("C", 1);
@@ -198,7 +262,7 @@ public class GraphicalEditor
         numParams.put("S", 2);
         numParams.put("X", 1);
         Scanner getFile = new Scanner(System.in);
-        System.out.println("Enter the name of your input file:");
+        System.out.println("Enter the name of your input file (typically input.txt):");
         String filename = getFile.nextLine();
         getFile.close();
         File inputFile = new File(WORKSPACE_PATH + filename);
@@ -227,19 +291,17 @@ public class GraphicalEditor
         {
             String commandLetter = commands.get(i)[0];
             String[] commandParameters = commands.get(i);
-            if (validCommands.contains(commandLetter))
+            if (VALID_COMMANDS.contains(commandLetter))
             {
                 if (commandLetter.equals("I") && numParams.get("I") == commandParameters.length)//runs
                 {
                     M = Integer.parseInt(commandParameters[1]);
                     N = Integer.parseInt(commandParameters[2]);
                     I(M, N);
-                    System.out.println("1");
                 }
                 else if (commandLetter.equals("C") && numParams.get("C") == commandParameters.length)//runs
                 {
                     C();
-                    System.out.println("2");
                 }
                 else if (commandLetter.equals("L") && numParams.get("L") == commandParameters.length)//runs
                 {
@@ -247,7 +309,6 @@ public class GraphicalEditor
                     int Y = Integer.parseInt(commandParameters[2]);
                     String C = commandParameters[3];
                     L(X, Y, C);
-                    System.out.println("3");
                 }
                 else if (commandLetter.equals("V") && numParams.get("V") == commandParameters.length)//runs
                 {
@@ -256,7 +317,6 @@ public class GraphicalEditor
                     int Y2 = Integer.parseInt(commandParameters[3]);
                     String C = commandParameters[4];
                     V(X, Y1, Y2, C);
-                    System.out.println("4");
                 }
                 else if (commandLetter.equals("H") && numParams.get("H") == commandParameters.length)
                 {
@@ -265,7 +325,6 @@ public class GraphicalEditor
                     int Y = Integer.parseInt(commandParameters[3]);
                     String C = commandParameters[4];
                     H(X1, X2, Y, C);
-                    System.out.println("5");
                 }
                 else if (commandLetter.equals("K") && numParams.get("K") == commandParameters.length)
                 {
@@ -275,25 +334,21 @@ public class GraphicalEditor
                     int Y2 = Integer.parseInt(commandParameters[4]);
                     String C = commandParameters[5];
                     K(X1, Y1, X2, Y2, C);
-                    System.out.println("6");
                 }
                 else if (commandLetter.equals("F") && numParams.get("F") == commandParameters.length)
                 {
-                    int X = Integer.parseInt(commandParameters[1]);
-                    int Y = Integer.parseInt(commandParameters[2]);
+                    int X = Integer.parseInt(commandParameters[1]) - 1;
+                    int Y = Integer.parseInt(commandParameters[2]) - 1;
                     String C = commandParameters[3];
                     F(X, Y, C);
-                    System.out.println("7");
                 }
                 else if (commandLetter.equals("S") && numParams.get("S") == commandParameters.length)
                 {
                     String Name = commandParameters[1];
                     S(Name);
-                    System.out.println("8");
                 }
                 else if (commandLetter.equals("X") && numParams.get("X") == commandParameters.length) //runs
                 {
-                    System.out.println("9");
                     System.exit(0);
                 }
                 else
